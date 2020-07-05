@@ -31,7 +31,7 @@ jobs:
 
     - name: Build base image
       run: |
-        docker build . --file build.Dockerfile -t "${PKG_TAG}"
+        docker build . -t "${PKG_TAG}"
 
     - name: Login to registries
       uses: azure/docker-login@v1

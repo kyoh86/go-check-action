@@ -16,7 +16,7 @@ step:
     run: go vet -json ./... > diagnostics.json
 
   - name: annotate diagnostics
-    uses: docker://docker.pkg.github.com/kyoh86/go-check-action/go-check:latest
+    uses: kyoh86/go-check-action@master
     with:
       level: error
 ```
@@ -29,7 +29,7 @@ step:
     run: some-custom-checker -json ./... > diagnostics.json
 
   - name: annotate diagnostics
-    uses: docker://docker.pkg.github.com/kyoh86/go-check-action/go-check:latest
+    uses: kyoh86/go-check-action@master
     with:
       level: error
 ```
