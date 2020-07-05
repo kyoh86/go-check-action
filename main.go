@@ -1,76 +1,77 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io"
 	"log"
 	"os"
-
-	"github.com/alecthomas/kingpin"
-)
-
-// nolint
-var (
-	version = "snapshot"
-	commit  = "snapshot"
-	date    = "snapshot"
+	"path/filepath"
 )
 
 var (
-	flag struct {
+	flags struct {
 		level    string
-		file     string
+		files    string
 		exitCode int
 	}
 )
 
 func main() {
-	app := kingpin.New("go-check", "Parse go/analysis reports and anotate diagnostics on the GitHub").Version(version).Author("kyoh86")
-	app.Flag("level", "Annotation level").Default("warning").EnumVar(&flag.level, "warning", "error")
-	app.Flag("exit-code", "Exit code when any diagnostics found").Default("1").IntVar(&flag.exitCode)
-	app.Arg("go-vet-JSON", "JSON files which `go vet -json` reported.").ExistingFileVar(&flag.file)
-	kingpin.MustParse(app.Parse(os.Args[1:]))
-
 	log.SetFlags(0)
-	if err := run(); err != nil {
+
+	flag.StringVar(&flags.level, "level", "warning", "Annotation level, 'warning' or 'error'")
+	flag.IntVar(&flags.exitCode, "exit-code", 0, "Exit code when any diagnostics found")
+	flag.Parse()
+	flags.files = flag.Arg(0)
+
+	if flags.level != "warning" && flags.level != "error" {
+		flag.Usage()
+		os.Exit(2)
+	}
+
+	count, err := run()
+	if err != nil {
 		log.Fatal(err)
 	}
+
+	log.Printf("%d diagnostics found", count)
+	if count > 0 {
+		os.Exit(flags.exitCode)
+	}
 }
 
-func run() error {
-	diagnostics, err := parse()
-	if err != nil {
-		return err
-	}
-	var formatFilePath func(string) string = func(f string) string { return f }
-	for _, d := range diagnostics {
-		fmt.Printf(
-			"::%s file=%s,line=%d,col=%d::%s\n",
-			flag.level,
-			formatFilePath(d.File),
-			d.Line,
-			d.Col,
-			d.Message,
-		)
-	}
-	if len(diagnostics) > 0 {
-		log.Printf("%d diagnostics found", len(diagnostics))
-		os.Exit(flag.exitCode)
-	}
-	return nil
-}
-
-func parse() ([]Diagnostic, error) {
-	var r io.Reader
-	if flag.file == "-" {
-		r = os.Stdin
-	} else {
-		file, err := os.Open(flag.file)
+func run() (int, error) {
+	total := 0
+	for _, filename := range filepath.SplitList(flags.files) {
+		diagnostics, err := parse(filename)
 		if err != nil {
-			return nil, fmt.Errorf("opening file: %w", err)
+			return 0, err
 		}
-		defer file.Close()
-		r = file
+		var formatFilePath func(string) string = func(f string) string { return f }
+		for _, d := range diagnostics {
+			fmt.Printf(
+				"::%s file=%s,line=%d,col=%d::%s\n",
+				flags.level,
+				formatFilePath(d.File),
+				d.Line,
+				d.Col,
+				d.Message,
+			)
+		}
+		total += len(diagnostics)
 	}
+
+	return total, nil
+}
+
+func parse(filename string) ([]Diagnostic, error) {
+	var r io.Reader
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, fmt.Errorf("opening file: %w", err)
+	}
+	defer file.Close()
+	r = file
 	return ParseDiagnostics(r)
 }

@@ -2,7 +2,7 @@ name: Go Check
 description: Parse go/analysis reports and anotate diagnostics on the GitHub
 inputs:
   go-vet-json:
-    description: A JSON file that a go/analysis (e.g. `go vet -json`) reported
+    description: JSON files separated comma which go/analysis checkers reported
     default: diagnostics.json
   level:
     description: Which level to annotate, `warning` or `error`
@@ -14,9 +14,9 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - --level
+    - -level
     - ${{ inputs.level }}
-    - --exit-code
+    - -exit-code
     - ${{ inputs.exit-code }}
     - ${{ inputs.go-vet-json }}
 
