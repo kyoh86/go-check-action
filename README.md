@@ -20,7 +20,7 @@ step:
     run: go vet -json ./... 2> diagnostics.json
 
   - name: annotate diagnostics
-    uses: kyoh86/go-check-action@v1
+    uses: kyoh86/go-check-action/annotate@v1
     with:
       level: error
       exit-code: 1
