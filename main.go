@@ -5,7 +5,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"path/filepath"
 
 	"github.com/alecthomas/kingpin"
 )
@@ -19,18 +18,16 @@ var (
 
 var (
 	flag struct {
-		level string
-		file  string
-		rel   bool
-		wd    string
+		level    string
+		file     string
+		exitCode int
 	}
 )
 
 func main() {
 	app := kingpin.New("go-check", "Parse go/analysis reports and anotate diagnostics on the GitHub").Version(version).Author("kyoh86")
 	app.Flag("level", "Annotation level").Default("warning").EnumVar(&flag.level, "warning", "error")
-	app.Flag("wd", "Working directory").ExistingDirVar(&flag.wd)
-	app.Flag("rel", "Show relative paths").BoolVar(&flag.rel)
+	app.Flag("exit-code", "Exit code when any diagnostics found").Default("1").IntVar(&flag.exitCode)
 	app.Arg("go-vet-JSON", "JSON files which `go vet -json` reported.").ExistingFileVar(&flag.file)
 	kingpin.MustParse(app.Parse(os.Args[1:]))
 
@@ -46,19 +43,6 @@ func run() error {
 		return err
 	}
 	var formatFilePath func(string) string = func(f string) string { return f }
-	if flag.rel {
-		wd, err := getWd()
-		if err != nil {
-			return fmt.Errorf("getting working directory: %w", err)
-		}
-		formatFilePath = func(f string) string {
-			r, err := filepath.Rel(wd, f)
-			if err != nil {
-				return f
-			}
-			return r
-		}
-	}
 	for _, d := range diagnostics {
 		fmt.Printf(
 			"::%s file=%s,line=%d,col=%d::%s\n",
@@ -68,6 +52,10 @@ func run() error {
 			d.Col,
 			d.Message,
 		)
+	}
+	if len(diagnostics) > 0 {
+		log.Printf("%d diagnostics found", len(diagnostics))
+		os.Exit(flag.exitCode)
 	}
 	return nil
 }
@@ -85,11 +73,4 @@ func parse() ([]Diagnostic, error) {
 		r = file
 	}
 	return ParseDiagnostics(r)
-}
-
-func getWd() (string, error) {
-	if flag.wd == "" {
-		return os.Getwd()
-	}
-	return filepath.Abs(flag.wd)
 }

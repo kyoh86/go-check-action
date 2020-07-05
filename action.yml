@@ -7,11 +7,16 @@ inputs:
   level:
     description: Which level to annotate, `warning` or `error`
     default: warning
+  exit-code:
+    description: Exit code when any diagnostics found
+    default: 0
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
     - --level
     - ${{ inputs.level }}
+    - --exit-code
+    - ${{ inputs.exit-code }}
     - ${{ inputs.go-vet-json }}
 

@@ -8,47 +8,27 @@ Parse [go/analysis](https://pkg.go.dev/golang.org/x/tools/go/analysis) reports a
 
 ## Usage
 
-### In the GitHub Action
-
 ```yaml
 step:
   - name: go vet
-    run: go vet -json ./... > diagnostics.json
+    run: go vet -json ./... 2> diagnostics.json
 
   - name: annotate diagnostics
-    uses: kyoh86/go-check-action@master
+    uses: kyoh86/go-check-action@v1
     with:
       level: error
+      exit-code: 1
 ```
 
-If you want to use other custom go/analysis checkers:
+You can replace `go vet` with other custom go/analysis checkers if you want.
 
-```yaml
-step:
-  - name: other custom checker
-    run: some-custom-checker -json ./... > diagnostics.json
+### Parameters
 
-  - name: annotate diagnostics
-    uses: kyoh86/go-check-action@master
-    with:
-      level: error
-```
-
-NOTE: `unitchecker`, `singlechecker` and `multichecker` in the go/analysis support `-json` flag.
-
-### By the docker
-
-```console
-$ docker pull docker.pkg.github.com/kyoh86/go-check-action/go-check:latest
-$ docker run docker.pkg.github.com/kyoh86/go-check-action/go-check:latest --help
-```
-
-### As a go program
-
-```console
-$ go get github.com/kyoh86/go-check-action
-$ go-check-action --help
-```
+| Name        | Default          | Description                                                   |
+| ---         | ---              | ---                                                           |
+| level       | warning          | Which level to annotate, `warning` or `error`                 |
+| exit-code   | 0                | Exit code when any diagnostics found                          |
+| go-vet-json | diagnostics.json | A JSON file that a go/analysis (e.g. `go vet -json`) reported |
 
 # LICENSE
 
