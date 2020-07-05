@@ -6,6 +6,12 @@ Parse [go/analysis](https://pkg.go.dev/golang.org/x/tools/go/analysis) reports a
 [![Coverage Status](https://img.shields.io/codecov/c/github/kyoh86/go-check-action.svg)](https://codecov.io/gh/kyoh86/go-check-action)
 [![Release](https://github.com/kyoh86/go-check-action/workflows/Release/badge.svg)](https://github.com/kyoh86/go-check-action/releases)
 
+## Example
+
+<img src="go-check-1.png" width="450" height="400">
+
+<img src="go-check-2.png" width="450" height="500">
+
 ## Usage
 
 ```yaml
