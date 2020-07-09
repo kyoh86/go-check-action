@@ -15,26 +15,18 @@ Parse [go/analysis](https://pkg.go.dev/golang.org/x/tools/go/analysis) reports a
 ## Usage
 
 ```yaml
-step:
-  - name: go vet
-    run: go vet -json ./... 2> diagnostics.json
+    steps:
+      - name: go vet
+        run: go vet -json ./... 2> diagnostics.json
 
-  - name: annotate diagnostics
-    uses: kyoh86/go-check-action/annotate@v1
-    with:
-      level: error
-      exit-code: 1
+      - name: annotate diagnostics
+        uses: kyoh86/go-check-action/annotate@v1
+        with:
+          level: error
+          exit-code: 1
 ```
 
-You can replace `go vet` with other custom go/analysis checkers if you want.
-
-### Parameters
-
-| Name        | Default          | Description                                                   |
-| ---         | ---              | ---                                                           |
-| level       | warning          | Which level to annotate, `warning` or `error`                 |
-| exit-code   | 0                | Exit code when any diagnostics found                          |
-| go-vet-json | diagnostics.json | A JSON file that a go/analysis (e.g. `go vet -json`) reported |
+Get more information: [USAGE.md](USAGE.md)
 
 # LICENSE
 
