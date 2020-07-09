@@ -62,6 +62,7 @@ func main() {
 		asmdecl.Analyzer,
 		assign.Analyzer,
 		atomic.Analyzer,
+		bodyclose.Analyzer,
 		bools.Analyzer,
 		buildtag.Analyzer,
 		cgocall.Analyzer,
