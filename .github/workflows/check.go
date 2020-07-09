@@ -14,6 +14,7 @@ import (
 	"github.com/tdakkota/asciicheck"
 	"github.com/timakin/bodyclose/passes/bodyclose"
 	magicnumbers "github.com/tommy-muehle/go-mnd"
+	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/multichecker"
 	"golang.org/x/tools/go/analysis/passes/asmdecl"
 	"golang.org/x/tools/go/analysis/passes/assign"
@@ -42,7 +43,8 @@ import (
 	"honnef.co/go/tools/simple"
 	"honnef.co/go/tools/staticcheck"
 	"honnef.co/go/tools/stylecheck"
-	"honnef.co/go/tools/unused"
+	// unused is not supported until v0.0.1.
+	// "honnef.co/go/tools/unused"
 )
 
 func main() {
@@ -92,7 +94,8 @@ func main() {
 		unmarshal.Analyzer,
 		unreachable.Analyzer,
 		unsafeptr.Analyzer,
-		unused.Analyzer,
+		// unused is not supported until v0.0.1.
+		// unused.Analyzer,
 		unusedresult.Analyzer,
 	)
 
