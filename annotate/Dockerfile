@@ -1,8 +1,8 @@
 FROM golang:alpine AS build-stage
 ADD . /work
 WORKDIR /work
-RUN go build -o go-check .
+RUN go build -o go-annotate .
 
 FROM alpine:latest
-COPY --from=build-stage /work/go-check /usr/local/bin/go-check
-ENTRYPOINT ["/usr/local/bin/go-check"]
+COPY --from=build-stage /work/go-annotate /usr/local/bin/go-annotate
+ENTRYPOINT ["/usr/local/bin/go-annotate"]
