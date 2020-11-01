@@ -2,6 +2,7 @@
 
 Parse [go/analysis](https://pkg.go.dev/golang.org/x/tools/go/analysis) reports and anotate diagnostics on the GitHub
 
+[![PkgGoDev](https://pkg.go.dev/badge/kyoh86/go-check-action)](https://pkg.go.dev/kyoh86/go-check-action)
 [![Go Report Card](https://goreportcard.com/badge/github.com/kyoh86/go-check-action)](https://goreportcard.com/report/github.com/kyoh86/go-check-action)
 [![Coverage Status](https://img.shields.io/codecov/c/github/kyoh86/go-check-action.svg)](https://codecov.io/gh/kyoh86/go-check-action)
 [![Release](https://github.com/kyoh86/go-check-action/workflows/Release/badge.svg)](https://github.com/kyoh86/go-check-action/releases)
